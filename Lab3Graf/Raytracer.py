@@ -5,76 +5,91 @@ from figuras import *
 from lights import *
 from materials import *
 
-width = 500
-height = 500
-pygame.init() 
+width = 1024
+height = 400
 
-screen = pygame.display.set_mode((width, height), pygame.DOUBLEBUF | pygame.HWACCEL | pygame.HWSURFACE  )
+pygame.init()
+
+# Creacion de la pantalla de pygame
+screen = pygame.display.set_mode((width, height), pygame.DOUBLEBUF | pygame.HWACCEL | pygame.HWSURFACE | pygame.SCALED)
 screen.set_alpha(None)
 
-
+# Instanciar el raytracer
 raytracer = Raytracer(screen)
 
-raytracer.envMap = pygame.image.load("Fondo/fondito.jpg")
+raytracer.environmentMap = pygame.image.load("Fondo/fondito.jpg")
 
-raytracer.rtClearColor(0.25,0.25,0.25)
+raytracer.rtClearColor(0.25, 0.25, 0.25)
 
-azul = pygame.image.load("Texturas/azul.jpg")
-morado = pygame.image.load("Texturas/morado.jpg")
+# ---------------------------------------- Creacion de Texturas ----------------------------------------
 
+TexturaMorada   = pygame.image.load("Texturas/morado.jpg")
+TexturaVerde  = pygame.image.load("Texturas/verde.jpg")
+TexturaRoja  = pygame.image.load("Texturas/rojo.jpg")
 
-blueMirror = Material(diffuse = (0.4,0.4,0.9), spec = 32, ks = 0.15, matType = REFLECTIVE)
+# --------------------------------------- Creacion de materiales ---------------------------------------
+# Opacos
+verde = Material(spec = 64, Ks = 0.2, texture = TexturaVerde)
 
-#TRANSPARENT MATS
-diamond = Material(diffuse = (0.9,0.9,0.9), spec = 128, ks = 0.2, ior= 2.417, matType = TRANSPARENT)
-brick = Material(diffuse = (1,0.4,0.4), spec = 8, ks = 0.01)
-grass = Material(diffuse = (0.4,1,0.4), spec =32, ks = 0.1) 
-water = Material(diffuse = (0.4,0.4,1), spec = 256, ks = 0.2)
+# Reflectivos
+roja = Material(spec = 64, Ks = 0.2, matType = REFLECTIVE, texture = TexturaRoja)
 
+# Transparentes
+morada = Material(diffuse=(0.9, 0.9, 0.9), spec = 128, Ks = 0.2, ior= 1.5, matType = TRANSPARENT, texture = TexturaMorada)
 
-mirror = Material(diffuse = (0.9,0.9,0.9), spec = 64, ks = 0.2, matType = REFLECTIVE)
-glass = Material(diffuse= (0.9,0.9,0.9),spec = 64, ks = 0.15, ior = 1.5, matType=TRANSPARENT)
-water = Material(diffuse = (0.4,0.4,1.0), spec = 128, ks = 0.2, ior= 1.33, matType = TRANSPARENT)
-goldMinecraft = Material(texture = morado,spec = 24, ks = 0.1, matType=OPAQUE)
-diamondMinecraft = Material(texture = morado,spec = 24, ks = 0.1, matType=OPAQUE)
+# ---------------------------------------- Figuras en la escena ----------------------------------------
+# Triangulos
 
-cilindro_azul = Material(texture=azul, spec=32, ks=0.1, matType=OPAQUE)
-cilindro_morado = Material(texture=morado, spec=32, ks=0.1, matType=TRANSPARENT)
-pyramid_materialR = Material(texture=azul, spec=32, ks=0.1, matType=REFLECTIVE)
+# Triangulo Opaco
+raytracer.scene.append(Triangle(
+    v0=[-1.2, -1, -2],
+    v1=[ 1.2, -1, -2],
+    v2=[ 0,  1, -2],
+    material = verde
+))
 
-# Crear una piramide
+# Triangulo Reflectivo
+raytracer.scene.append(Triangle(
+    v0=[-5, 2, -4],
+    v1=[ 1,  1, -11],
+    v2=[-4,  -2.3, -6],
+    material = morada 
+))
 
-cilindro = Cylinder(position=(0, -1, -1.5), radius=0.5, height=0.5, material=cilindro_azul)
+# Triangulo Transparente
+raytracer.scene.append(Triangle(
+    v0=[0, -2, -6],
+    v1=[6,  -1, -5],
+    v2=[3,  2, -5],
+    material = roja
+))
 
+# Extras
+raytracer.scene.append(Sphere(position = [0,0,-4], radius = 1, material = scaly))
 
-raytracer.scene.append(cilindro)
+# ----------------------------------------- Luces de la escena -----------------------------------------
+raytracer.lights.append(AmbientLight(intensity=0.1))
+raytracer.lights.append(DirectionalLight(direction = (-1,-1,-1), intensity = 0.9))
+raytracer.lights.append(PointLight(point = (2.5,0,-4.5), intensity = 100, color = (1,0.2,1)))
 
-
-
-# Luces
-ambient_light = AmbientLight(intensity=0.3, color=(1, 0.8, 0.6))  # Luz ambiental suave
-directional_light = DirectionalLight(direction=(1, -1, -1), intensity=1.0, color=(1, 0.9, 0.8))  # Luz direccional principal
-point_light = PointLight(point=(2, 2, 2), intensity=1.0, color=(1, 1, 1))  # Luz puntual (ajusta la posición según sea necesario)
-
-# Agregar las luces a la escena
-raytracer.lights.append(ambient_light)
-raytracer.lights.append(directional_light)
-raytracer.lights.append(point_light)
 
 raytracer.rtClear()
 raytracer.rtRender()
 
-print("\nrender time", pygame.time.get_ticks()/1000, "secs")
+print("\n Render Time: ", pygame.time.get_ticks() / 1000, "secs")
+
 isRunning = True
-while isRunning:  
+while isRunning:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             isRunning = False
         elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_ESCAPE:
+            if event.type == pygame.K_ESCAPE:
                 isRunning = False
-rect = pygame.Rect(0,0,width,height)   
+
+
+rect = pygame.Rect(0, 0, width, height)
 sub = screen.subsurface(rect)
-pygame.image.save(sub, "output.jpg")   
+pygame.image.save(sub, "output.jpg")
 
 pygame.quit()
