@@ -10,11 +10,9 @@ height = 400
 
 pygame.init()
 
-# Creacion de la pantalla de pygame
 screen = pygame.display.set_mode((width, height), pygame.DOUBLEBUF | pygame.HWACCEL | pygame.HWSURFACE | pygame.SCALED)
 screen.set_alpha(None)
 
-# Instanciar el raytracer
 raytracer = Raytracer(screen)
 
 raytracer.environmentMap = pygame.image.load("Fondo/fondito.jpg")
@@ -28,19 +26,14 @@ TexturaVerde  = pygame.image.load("Texturas/verde.jpg")
 TexturaRoja  = pygame.image.load("Texturas/rojo.jpg")
 
 # --------------------------------------- Creacion de materiales ---------------------------------------
-# Opacos
 verde = Material(spec = 64, Ks = 0.2, texture = TexturaVerde)
 
-# Reflectivos
 roja = Material(spec = 64, Ks = 0.2, matType = REFLECTIVE, texture = TexturaRoja)
 
-# Transparentes
 morada = Material(diffuse=(0.9, 0.9, 0.9), spec = 128, Ks = 0.2, ior= 1.5, matType = TRANSPARENT, texture = TexturaMorada)
 
 # ---------------------------------------- Figuras en la escena ----------------------------------------
-# Triangulos
 
-# Triangulo Opaco
 raytracer.scene.append(Triangle(
     v0=[-1.2, -1, -2],
     v1=[ 1.2, -1, -2],
@@ -48,7 +41,6 @@ raytracer.scene.append(Triangle(
     material = verde
 ))
 
-# Triangulo Reflectivo
 raytracer.scene.append(Triangle(
     v0=[-5, 2, -4],
     v1=[ 1,  1, -11],
@@ -56,7 +48,6 @@ raytracer.scene.append(Triangle(
     material = morada 
 ))
 
-# Triangulo Transparente
 raytracer.scene.append(Triangle(
     v0=[0, -2, -6],
     v1=[6,  -1, -5],
@@ -64,8 +55,6 @@ raytracer.scene.append(Triangle(
     material = roja
 ))
 
-# Extras
-raytracer.scene.append(Sphere(position = [0,0,-4], radius = 1, material = scaly))
 
 # ----------------------------------------- Luces de la escena -----------------------------------------
 raytracer.lights.append(AmbientLight(intensity=0.1))
