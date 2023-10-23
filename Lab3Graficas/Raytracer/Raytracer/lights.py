@@ -1,4 +1,4 @@
-from myNumpy import vector_normalize, dot_product, subtract_vector, vector_magnitude, reflectVector
+from numpyPablo import vector_normalize, dot_product, subtract_vector, vector_magnitude, reflectVector
 
 
 class Light(object):

@@ -1,6 +1,6 @@
 from math import pi, tan, atan2, acos
 from materials import *
-from myNumpy import dot_product, fresnel, refractVector, totalInternalReflection, vector_normalize, add_vector,subtract_vector, reflectVector, vector_scalar_mult
+from numpyPablo import dot_product, fresnel, refractVector, totalInternalReflection, vector_normalize, add_vector,subtract_vector, reflectVector, vector_scalar_mult
 import pygame
 import random
 

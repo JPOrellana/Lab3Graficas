@@ -1,4 +1,4 @@
-from myNumpy import add_vector, vector_magnitude, dot_product, subtract_vector, vector_normalize, vector_scalar_mult, cross_product
+from numpyPablo import add_vector, vector_magnitude, dot_product, subtract_vector, vector_normalize, vector_scalar_mult, cross_product
 from math import pi, atan2, acos
 
 class Intercept(object):
