@@ -1,7 +1,8 @@
-from numpyPablo import custom_vector_normalize, custom_dot_product, custom_subtract_vectors, custom_vector_mag, custom_ref
+from myNumpy import vector_normalize, dot_product, subtract_vector, vector_magnitude, reflectVector
 
 
 class Light(object):
+    # Clase que representa una luz
 
     def __init__(self, intensity = 1, color = (1,1,1), light_type = "None"):
         self.intensity = intensity
@@ -24,6 +25,7 @@ class Light(object):
 
 
 class AmbientLight(Light):
+    # Clase que representa la luz ambiental
 
     def __init__(self, intensity=1, color=(1, 1, 1)):
         super().__init__(intensity, color, "Ambient")
@@ -31,16 +33,17 @@ class AmbientLight(Light):
 
 
 class DirectionalLight(Light):
+    # Clase que representa la luz direccional
 
     def __init__(self, direction = (0,-1,0), intensity=1, color=(1, 1, 1)):
         super().__init__(intensity, color, "Directional")
-        self.direction = custom_vector_normalize(direction)
+        self.direction = vector_normalize(direction)
 
 
     def getDiffuseColor(self, intercept):
         direction = [i * -1 for i in self.direction]
 
-        intensity = custom_dot_product(intercept.normal, direction) * self.intensity
+        intensity = dot_product(intercept.normal, direction) * self.intensity
         intensity = max(0, min(1, intensity))
         intensity *= 1 - intercept.obj.material.Ks
 
@@ -52,12 +55,12 @@ class DirectionalLight(Light):
     def getSpecularColor(self, intercept, viewPos):
         direction = [i * -1 for i in self.direction]
         
-        reflect = custom_ref(intercept.normal, direction)
+        reflect = reflectVector(intercept.normal, direction)
 
-        viewDir = custom_subtract_vectors(viewPos, intercept.point)
-        viewDir = custom_vector_normalize(viewDir)
+        viewDir = subtract_vector(viewPos, intercept.point)
+        viewDir = vector_normalize(viewDir)
 
-        specularIntensity = max(0, custom_dot_product(viewDir, reflect)) ** intercept.obj.material.specular
+        specularIntensity = max(0, dot_product(viewDir, reflect)) ** intercept.obj.material.specular
         specularIntensity *= intercept.obj.material.Ks
         specularIntensity *= self.intensity
 
@@ -74,13 +77,16 @@ class PointLight(Light):
 
 
     def getDiffuseColor(self, intercept):
-        direction = custom_subtract_vectors(self.point, intercept.point)
-        R = custom_vector_mag(direction)
+        direction = subtract_vector(self.point, intercept.point)
+        R = vector_magnitude(direction)
         direction = [direction[i] / R for i in range(3)]
 
-        intensity = custom_dot_product(intercept.normal, direction) * self.intensity
+        intensity = dot_product(intercept.normal, direction) * self.intensity
         intensity *= 1 - intercept.obj.material.Ks
 
+        # Ley de cuadrados inversos
+        # I final = Intensidad / R^2
+        # R es la distancia del punto intercepto a la luz de punto
         if R != 0:
             intensity = intensity / R**2
         
@@ -91,16 +97,16 @@ class PointLight(Light):
         return diffuseColor
 
     def getSpecularColor(self, intercept, viewPos):
-        direction = custom_subtract_vectors(self.point, intercept.point)
-        R = custom_vector_mag(direction)
+        direction = subtract_vector(self.point, intercept.point)
+        R = vector_magnitude(direction)
         direction = [direction[i] / R for i in range(3)]
         
-        reflect = custom_ref(intercept.normal, direction)
+        reflect = reflectVector(intercept.normal, direction)
 
-        viewDir = custom_subtract_vectors(viewPos, intercept.point)
-        viewDir = custom_vector_normalize(viewDir)
+        viewDir = subtract_vector(viewPos, intercept.point)
+        viewDir = vector_normalize(viewDir)
 
-        specularIntensity = max(0, custom_dot_product(viewDir, reflect)) ** intercept.obj.material.specular
+        specularIntensity = max(0, dot_product(viewDir, reflect)) ** intercept.obj.material.specular
         specularIntensity *= intercept.obj.material.Ks
         specularIntensity *= self.intensity
 

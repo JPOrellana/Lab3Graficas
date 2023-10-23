@@ -1,12 +1,12 @@
 import pygame
 from pygame.locals import *
 from rt import Raytracer
-from figuras import *
+from figures     import *
 from lights import *
 from materials import *
 
-width = 1024
-height = 400
+width = 670
+height = 500
 
 pygame.init()
 
@@ -19,44 +19,29 @@ raytracer.environmentMap = pygame.image.load("Fondo/fondito.jpg")
 
 raytracer.rtClearColor(0.25, 0.25, 0.25)
 
-# ---------------------------------------- Creacion de Texturas ----------------------------------------
+# Crear Texturas
 
 TexturaMorada   = pygame.image.load("Texturas/morado.jpg")
 TexturaVerde  = pygame.image.load("Texturas/verde.jpg")
 TexturaRoja  = pygame.image.load("Texturas/rojo.jpg")
 
-# --------------------------------------- Creacion de materiales ---------------------------------------
+# Crear Materiales
 verde = Material(spec = 64, Ks = 0.2, texture = TexturaVerde)
 
 roja = Material(spec = 64, Ks = 0.2, matType = REFLECTIVE, texture = TexturaRoja)
 
 morada = Material(diffuse=(0.9, 0.9, 0.9), spec = 128, Ks = 0.2, ior= 1.5, matType = TRANSPARENT, texture = TexturaMorada)
 
-# ---------------------------------------- Figuras en la escena ----------------------------------------
+# Crear Figuras
 
-raytracer.scene.append(Triangle(
-    v0=[-1.2, -1, -2],
-    v1=[ 1.2, -1, -2],
-    v2=[ 0,  1, -2],
-    material = verde
-))
+raytracer.scene.append(Triangle(v0=[-1.3, -1, -2], v1=[ -0.8, -1, -2],  v2=[ -1.05,  -0.5 , -2], material = verde))
 
-raytracer.scene.append(Triangle(
-    v0=[-5, 2, -4],
-    v1=[ 1,  1, -11],
-    v2=[-4,  -2.3, -6],
-    material = morada 
-))
+raytracer.scene.append(Triangle(v0=[-0.7, -1, -2], v1=[0.1,  -1, -2], v2=[-0.35,  0.1, -2], material = roja))
 
-raytracer.scene.append(Triangle(
-    v0=[0, -2, -6],
-    v1=[6,  -1, -5],
-    v2=[3,  2, -5],
-    material = roja
-))
+raytracer.scene.append(Triangle(v0=[0.2, -1, -2], v1=[1.3,  -1, -2], v2=[0.7,  0.4, -2], material = morada))
 
 
-# ----------------------------------------- Luces de la escena -----------------------------------------
+# Luces
 raytracer.lights.append(AmbientLight(intensity=0.1))
 raytracer.lights.append(DirectionalLight(direction = (-1,-1,-1), intensity = 0.9))
 raytracer.lights.append(PointLight(point = (2.5,0,-4.5), intensity = 100, color = (1,0.2,1)))
